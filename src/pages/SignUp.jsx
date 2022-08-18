@@ -1,5 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { db } from "../firebase.config";
 import { ReactComponent as ArrowRightIcon } from "../assets/svg/keyboardArrowRightIcon.svg";
 import visibilityIcon from "../assets/svg/visibilityIcon.svg";
 
@@ -20,13 +26,33 @@ function SignUp() {
       [e.target.id]: e.target.value, //can be use for all change handlers as long as id is same as the fields defined in the useState
     }));
   };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      const user = userCredential.user;
+
+      updateProfile(auth.currentUser, { displayName: name });
+      navigate("/");
+    } catch (error) {
+      alert(error);
+    }
+  };
+
   return (
     <>
       <div className="pageContainer">
         <header>
-          <p className="pageHeader">Welcome Back!</p>
+          <p className="pageHeader">Hey There!</p>
         </header>
-        <form>
+        <form onSubmit={onSubmit}>
           <input
             type="text"
             className="nameInput"
