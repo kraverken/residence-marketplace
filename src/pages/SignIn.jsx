@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { ReactComponent as ArrowRightIcon } from "../assets/svg/keyboardArrowRightIcon.svg";
 import visibilityIcon from "../assets/svg/visibilityIcon.svg";
 
@@ -19,13 +20,31 @@ function SignIn() {
       [e.target.id]: e.target.value, //can be use for all change handlers as long as id is same as the fields defined in the useState
     }));
   };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      const userCredentials = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      if (userCredentials.user) {
+        navigate("/");
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
   return (
     <>
       <div className="pageContainer">
         <header>
           <p className="pageHeader">Welcome Back!</p>
         </header>
-        <form>
+        <form onSubmit={onSubmit}>
           <input
             type="email"
             className="emailInput"
