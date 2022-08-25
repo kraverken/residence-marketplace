@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import Spinner from "../components/Spinner";
 
 function CreateListing() {
@@ -58,9 +59,47 @@ function CreateListing() {
     };
   }, [isMounted]);
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+
+    if (discountedPrice >= regularPrice) {
+      setLoading(false);
+      toast.error("Discounted price needs to be less than regular price");
+      return;
+    }
+    if (images.length > 6) {
+      setLoading(false);
+      toast.error("Max 6 images allowed");
+      return;
+    }
+    let geolocation = {};
+    let location;
+
+    if (geoLocationEnabled) {
+      const response = await fetch(
+        `http://www.mapquestapi.com/geocoding/v1/address?key=${process.env.REACT_APP_MAPQUEST_API_KEY}&location=${address}`
+      );
+
+      const data = await response.json();
+
+      geolocation.lat = data.results[0]?.locations[0].latLng.lat ?? 0;
+      geolocation.lng = data.results[0]?.locations[0].latLng.lng ?? 0;
+
+      location =
+        (data.results[0]?.locations[0].street).length === 0
+          ? undefined
+          : data.results[0]?.providedLocation.location;
+
+      if (location === undefined || location.includes("undefined")) {
+        setLoading(false);
+        toast.error("Please enter a correct address");
+        return;
+      }
+    } else {
+      geolocation.lat = latitude;
+      geolocation.lng = longitude;
+    }
+    setLoading(false);
   };
 
   const onMutate = (e) => {
