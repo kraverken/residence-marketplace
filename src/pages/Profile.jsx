@@ -12,7 +12,7 @@ import {
   orderBy,
   deleteDoc,
 } from "firebase/firestore";
-
+import ListingItem from "../components/ListingItem";
 import { db } from "../firebase.config";
 import arrowRight from "../assets/svg/keyboardArrowRightIcon.svg";
 import homeIcon from "../assets/svg/homeIcon.svg";
@@ -75,6 +75,7 @@ function Profile() {
       [e.target.id]: e.target.value,
     }));
   };
+
   return (
     <div className="profile">
       <header className="profileHeader">
@@ -122,6 +123,21 @@ function Profile() {
           <p>Sell or rent your residence</p>
           <img src={arrowRight} alt="arrow right" />
         </Link>
+        {!loading && listings?.length > 0 && (
+          <>
+            <p className="listingText">Your Listings</p>
+            <ul className="listingsList">
+              {listings.map((listing) => (
+                <ListingItem
+                  key={listing.id}
+                  listing={listing.data}
+                  id={listing.id}
+                  onDelete={() => onDelete(listing.id)}
+                />
+              ))}
+            </ul>
+          </>
+        )}
       </main>
     </div>
   );
