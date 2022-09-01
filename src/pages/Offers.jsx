@@ -28,7 +28,6 @@ function Offers() {
           where("offer", "==", true),
           orderBy("timestamp", "desc", limit(1))
         );
-        console.log(q);
         //execute query
         const querySnap = await getDocs(q);
 
