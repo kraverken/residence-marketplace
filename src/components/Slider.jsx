@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
 import { db } from "../firebase.config";
-import SwiperCore, { Navigation, Pagination, Scrollbar, Ally } from "swiper";
+import { Navigation, Pagination, Scrollbar } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -58,6 +58,7 @@ function Slider() {
             >
               <div className="swiper-container">
                 <img
+                  alt="listing images"
                   src={data.imageUrls[0]}
                   style={{
                     objectFit: "cover",
